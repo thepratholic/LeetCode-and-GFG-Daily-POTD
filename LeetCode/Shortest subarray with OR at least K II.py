@@ -23,7 +23,7 @@ class Solution:
 
         return -1 if min_length == float("inf") else min_length
 
-    def _update_bit_counts(self, bit_counts, number, delta)
+    def _update_bit_counts(self, bit_counts, number, delta):
 
         for pos in range(32):
             if number & (1 << pos):
