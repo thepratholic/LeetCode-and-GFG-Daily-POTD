@@ -2,19 +2,29 @@ from typing import List
 
 
 class Solution:
-    def lower_bound(self, nums, value):
-        left, right = 0, len(nums) - 1
-        res = 0
+    def countFairPairs(self, nums: List[int], lower: int, upper: int) -> int:
         n = len(nums)
+        nums.sort()
+        left, right = 0, n - 1
+        cnt_within_upper = 0
+
         while left < right:
-            sum = nums[left] + nums[right]
-            if sum < value:
-                res += (right - left)
+            if nums[left] + nums[right] <= upper:
+                cnt_within_upper += (right - left)
+                left += 1
+
+            else:
+                right -= 1
+
+        
+        left, right = 0, n - 1
+        cnt_below_lower = 0
+
+        while left < right:
+            if nums[left] + nums[right] < lower:
+                cnt_below_lower += (right - left)
                 left += 1
             else:
                 right -= 1
-        return res
 
-    def countFairPairs(self, nums: List[int], lower: int, upper: int) -> int:
-        nums.sort()
-        return self.lower_bound(nums, upper + 1) - self.lower_bound(nums, lower)
+        return cnt_within_upper - cnt_below_lower
