@@ -1,24 +1,20 @@
+import heapq
 from typing import List
 
 
 class Solution:
     def maxTwoEvents(self, events: List[List[int]]) -> int:
-        n = len(events)
-        mp = {}
-        for a, b, c in events:
-            mp[a] = mp[b] = 0
-        for i, el in enumerate(sorted(mp)):
-            mp[el] = i
         events.sort()
-        maxscore = [0] * (len(mp) + 1)
-        j = n - 1
-        maxyet = 0
-        for i in range(len(mp), -1, -1):
-            while j >= 0 and mp[events[j][0]] >= i:
-                maxyet = max(maxyet, events[j][2])
-                j -= 1
-            maxscore[i] = maxyet
-        res = 0
-        for a, b, c in events:
-            res = max(res, c + maxscore[mp[b] + 1])
-        return res
+        ans = 0
+        maxi = 0
+        pq = []
+        for start, end, val in events:
+
+            while pq and pq[0][0] < start:
+                _, prev_val = heapq.heappop(pq)
+                maxi = max(maxi, prev_val)
+
+            ans = max(ans, val + maxi)
+            heapq.heappush(pq, (end, val))
+
+        return ans
