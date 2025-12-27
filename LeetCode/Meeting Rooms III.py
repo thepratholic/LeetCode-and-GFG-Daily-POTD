@@ -1,41 +1,37 @@
 import heapq
 from typing import List
 
+
 class Solution:
-    def mostBooked(self, n: int, meetings: List[List[int]]) -> int:
-        meetings.sort()
-        
-        # Room usage count
-        used_rooms_count = [0] * n
+    def mostBooked(self, n: int, a: List[List[int]]) -> int:
+        a.sort()
 
-        # Min-heap for room availability: (end_time, room_index)
-        busy_rooms = []
-
-        # Min-heap for available room indices
-        available_rooms = list(range(n))
-        heapq.heapify(available_rooms)
-
-        for start, end in meetings:
-            # Free up all rooms that are done before current meeting starts
-            while busy_rooms and busy_rooms[0][0] <= start:
-                _, room = heapq.heappop(busy_rooms)
-                heapq.heappush(available_rooms, room)
-
-            duration = end - start
-
-            if available_rooms:
-                room = heapq.heappop(available_rooms)
-                heapq.heappush(busy_rooms, (end, room))
-                used_rooms_count[room] += 1
-            else:
-                # No room is free, delay meeting to the earliest available time
-                earliest_end_time, room = heapq.heappop(busy_rooms)
-                new_end = earliest_end_time + duration
-                heapq.heappush(busy_rooms, (new_end, room))
-                used_rooms_count[room] += 1
-
-        # Find the room used most often (with smallest index if tie)
-        max_used = max(used_rooms_count)
+        available = []
         for i in range(n):
-            if used_rooms_count[i] == max_used:
+            heapq.heappush(available, i)
+
+        busy = [] # (end_time, roomNo) 
+        most_used = [0] * n
+
+        for s, e in a:
+            d = e - s
+
+            while busy and busy[0][0] <= s:
+                end, roomNo = heapq.heappop(busy)
+                heapq.heappush(available, roomNo)
+
+            if available:
+                room = heapq.heappop(available)
+                most_used[room] += 1
+                heapq.heappush(busy, (e, room))
+
+            else:
+                will_early_end_meeting, room = heapq.heappop(busy)
+                new_d = d + will_early_end_meeting
+                heapq.heappush(busy, (new_d, room))
+                most_used[room] += 1
+
+        maxi = max(most_used)
+        for i, v in enumerate(most_used):
+            if v == maxi:
                 return i
