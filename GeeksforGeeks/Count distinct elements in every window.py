@@ -1,34 +1,32 @@
+from collections import defaultdict
+
 class Solution:
     def countDistinct(self, arr, k):
+        
         n = len(arr)
+        
+        l, r = 0, k
+        
         ans = []
-        freq_map = {}
-        distinct_count = 0
         
-        # Initialize the frequency map for the first window
+        mpp = defaultdict(int)
+        
         for i in range(k):
-            if arr[i] not in freq_map:
-                freq_map[arr[i]] = 0
-                distinct_count += 1
-            freq_map[arr[i]] += 1
-        
-        ans.append(distinct_count)
-        
-        # Slide the window
-        for i in range(k, n):
-            # Remove the element going out of the window
-            if freq_map[arr[i - k]] == 1:
-                distinct_count -= 1
-                del freq_map[arr[i - k]]
-            else:
-                freq_map[arr[i - k]] -= 1
+            mpp[arr[i]] += 1
             
-            # Add the new element coming into the window
-            if arr[i] not in freq_map:
-                freq_map[arr[i]] = 0
-                distinct_count += 1
-            freq_map[arr[i]] += 1
-            
-            ans.append(distinct_count)
+        ans.append(len(mpp))
         
+        while r < n:
+            
+            mpp[arr[r]] += 1
+            
+            mpp[arr[l]] -= 1
+            if mpp[arr[l]] == 0:
+                del mpp[arr[l]]
+                
+            ans.append(len(mpp))
+            
+            r += 1
+            l += 1
+            
         return ans
