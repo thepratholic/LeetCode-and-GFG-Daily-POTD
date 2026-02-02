@@ -1,1 +1,1 @@
-# LeetCode-and-GFG-Daily-POTD
+# LeetCode-Daily-POTD
